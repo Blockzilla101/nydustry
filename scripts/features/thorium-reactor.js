@@ -1,4 +1,4 @@
-// "Thorium reactor explosions destroy terrain"
+// "thorium reactor explosions destroy terrain"
 var reactorExplosion = new Effect(240, e => {
     Draw.color(Pal.thoriumPink);
     Lines.stroke(1.2);
@@ -8,20 +8,11 @@ var reactorExplosion = new Effect(240, e => {
 var destroy = (nukex, nukey) => {
     var hx = nukex / Vars.tilesize + 40;
     var lx = nukex / Vars.tilesize - 40;
-    var xs = [];
-    for(var i = lx; i <= hx; i++){
-        xs.push(i);
-    };
-    
     var hy = nukey / Vars.tilesize + 40;
     var ly = nukey / Vars.tilesize - 40;
-    var ys = [];
-    for(var i = ly; i <= hy; i++){
-        ys.push(i);
-    };
     
-    for(var x of xs){
-        for(var y of ys){
+    for(var x = lx; x <= hx; x++){
+        for(var y = ly; y <= hy; y++){
             var dx = x - nukex / Vars.tilesize;
             var dy = y - nukey / Vars.tilesize;
             
@@ -72,7 +63,7 @@ Blocks.thoriumReactor.buildType = () => extend(NuclearReactor.NuclearReactorBuil
         
         if(this.heat >= 0.999){
             Events.fire(Trigger.thoriumReactorOverheat);
-            reactorExplosion.at(this.x, this.y);
+            !Vars.headless ? reactorExplosion.at(this.x, this.y) : Call.effectReliable(reactorExplosion, this.x, this.y, 0, Pal.thoriumPink);
             var x = this.x;
             var y = this.y;
             Timer.schedule(() => {
