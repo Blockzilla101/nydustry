@@ -6,18 +6,22 @@ var reactorExplosion = new Effect(240, e => {
 });
 
 var destroy = (nukex, nukey) => {
-    var hx = nukex / Vars.tilesize + 40;
-    var lx = nukex / Vars.tilesize - 40;
-    var hy = nukey / Vars.tilesize + 40;
-    var ly = nukey / Vars.tilesize - 40;
+    var hy = nukey / Vars.tilesize + 40, ly = nukey / Vars.tilesize - 40;
+    var hx = nukex / Vars.tilesize + 40, lx = nukex / Vars.tilesize - 40;
     
-    for(var x = lx; x <= hx; x++){
-        for(var y = ly; y <= hy; y++){
-            var dx = x - nukex / Vars.tilesize;
-            var dy = y - nukey / Vars.tilesize;
-            
-            if(dx * dx + dy * dy < 40 * 40 && x > 0 && x < Vars.world.width() && y > 0 && y < Vars.world.height() && Vars.world.tile(x, y).team() == Team.derelict){
-                Vars.world.tile(x, y).setBlock(Blocks.air);
+    for(var y = ly; y <= hy; y++){
+        if(y > 0 && y < Vars.world.height()){
+            for(var x = lx; x <= hx; x++){
+                if(x > 0 && x < Vars.world.width()){
+                    if(Vars.world.tile(x, y).block() !== Blocks.air){
+                        var dx = x - nukex / Vars.tilesize, dy = y - nukey / Vars.tilesize;
+                        var res = dx * dx + dy * dy;
+                        
+                        if(res < 40 * 40){
+                            if(Vars.world.tile(x, y).team() === Team.derelict) Vars.world.tile(x, y).setAir();
+                        };
+                    };
+                };
             };
         };
     };

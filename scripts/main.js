@@ -1,5 +1,5 @@
 var features = [
-    "thorium-reactor"
+    "thorium-reactor", /* "pyra-mixer" */
 ];
 
 for(var feature of features) require("features/" + feature);
