@@ -3,6 +3,6 @@
     displayName: "Nydustry",
     description: "Adds features from the nydus server to the game"
     author: "QmelZ",
-    version: "0.1b",
+    version: "0.2b",
     minGameVersion: 121
 }
