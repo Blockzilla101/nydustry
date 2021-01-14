@@ -1,8 +1,8 @@
 {
     name: "nydustry",
     displayName: "Nydustry",
-    description: "Adds features from the nydus server to the game"
+    description: "Adds features from the nydus server to the game",
     author: "QmelZ",
-    version: "0.3b",
+    version: "0.4b",
     minGameVersion: 121
 }

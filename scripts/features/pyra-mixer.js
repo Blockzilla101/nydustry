@@ -17,9 +17,11 @@ Blocks.pyratiteMixer.buildType = () => extend(GenericCrafter.GenericCrafterBuild
             this.nearby(0, 2),
             this.nearby(-1, 1)
         ];
-        for(var b of around){
-            if(b !== null && b.block === Blocks.unloader && (b.sortItem === Items.lead || b.sortItem === null)){
-                this.kill();
+        if(this.items.get(Items.lead) > 0){
+            for(var b of around){
+                if(b !== null && b.block === Blocks.unloader && (b.sortItem === Items.lead || b.sortItem === null)){
+                    this.kill();
+                }
             }
         }
     }
