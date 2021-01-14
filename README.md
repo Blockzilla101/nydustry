@@ -4,9 +4,9 @@ Implements the features of the nydus server as a js mod
 ## Features
 ### Implemented
 - thorium reactor explosions destroy terrain (thanks to [ZestyLemonade](https://github.com/sample-text-here) for helping me with this)
+- the pyratite mixer contains free lead (again thanks to zesty)
 
 ### In Progress
-- the pyratite mixer contains free lead
 - separators contain free slag
 - cryofluid is extracted from titanium without water
 - separators that are clogged make titanium
