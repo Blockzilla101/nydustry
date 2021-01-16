@@ -1,79 +1,54 @@
 // "thorium reactor explosions destroy terrain"
-var reactorExplosion = new Effect(240, e => {
-    Draw.color(Pal.thoriumPink);
-    Lines.stroke(1.2);
-    Lines.circle(e.x, e.y, e.fin() * 40 * Vars.tilesize);
-});
+let calculate;
+let effect;
+let explode;
 
-var destroy = (nukex, nukey) => {
-    var hy = nukey / Vars.tilesize + 40, ly = nukey / Vars.tilesize - 40;
-    var hx = nukex / Vars.tilesize + 40, lx = nukex / Vars.tilesize - 40;
-    
-    for(var y = ly; y <= hy; y++){
-        if(y > 0 && y < Vars.world.height()){
-            for(var x = lx; x <= hx; x++){
-                if(x > 0 && x < Vars.world.width()){
-                    if(Vars.world.tile(x, y).block() !== Blocks.air){
-                        var dx = x - nukex / Vars.tilesize, dy = y - nukey / Vars.tilesize;
-                        var res = dx * dx + dy * dy;
-                        
-                        if(res < 40 * 40){
-                            if(Vars.world.tile(x, y).team() === Team.derelict) Vars.world.tile(x, y).setAir();
-                        };
+calculate = () => {
+    let blocks = new Seq();
+    for(let y = -40; y <= 40; y++){
+        for(let x = -40; x <= 40; x++){
+            let res = x * x + y * y;
+            
+            if(res < 40 * 40){
+                blocks.add([x, y]);
+            }
+        };
+    };
+    return blocks;
+};
+
+effect = (reactor) => {
+    let i = 0;
+    Timer.schedule(() => {
+        Bullets.slagShot.create(reactor, reactor.team, reactor.x, reactor.y, i, 1, 8);
+        i += 15;
+    }, 0, 0, 24);
+};
+
+explode = (rx, ry, rseq, tile) => {
+    Timer.schedule(() => {
+        let nx = rx / Vars.tilesize;
+        let ny = ry / Vars.tilesize;
+        
+        rseq.each(e => {
+            let ux = nx + e[0];
+            let uy = ny + e[1];
+            
+            if(ux > 0 && uy > 0 && ux < Vars.world.width() && uy < Vars.world.height()){
+                if(Vars.world.tile(ux, uy).block !== Blocks.air){
+                    if(Vars.world.tile(ux, uy).team() === Team.derelict){
+                        Vars.world.tile(ux, uy).setAir();
                     };
                 };
             };
-        };
-    };
-    Events.fire(new WorldLoadEvent());
+        });
+    
+        Events.fire(new WorldLoadEvent());
+    }, 4);
 };
 
-Blocks.thoriumReactor.buildType = () => extend(NuclearReactor.NuclearReactorBuild, Blocks.thoriumReactor, {
-    updateTile(){
-        var cliquid = this.block.consumes.get(ConsumeType.liquid);
-        var item = this.block.consumes.getItem().items[0].item;
-        
-        var fuel = this.items.get(item);
-        var fullness = fuel / this.block.itemCapacity;
-        this.productionEfficiency = fullness;
-        
-        if(fuel > 0 && this.enabled){
-            this.heat += fullness * this.block.heating * Math.min(this.delta(), 4);
-            
-            if(this.timer.get(this.block.timerFuel, this.block.itemDuration / this.timeScale)){
-                this.consume();
-            }
-        }else{
-            this.productionEfficiency = 0;
-        }
-        
-        var liquid = cliquid.liquid;
-        
-        if(this.heat > 0){
-            var maxUsed = Math.min(this.liquids.get(liquid), this.heat / this.block.coolantPower);
-            this.heat -= maxUsed * this.block.coolantPower;
-            this.liquids.remove(liquid, maxUsed);
-        }
-        
-        if(this.heat > this.smokeThreshold){
-            var smoke = 1.0 + (heat - smokeThreshold) / (1 - smokeThreshold); //ranges from 1.0 to 2.0
-            if(Mathf.chance(smoke / 20.0 * delta())){
-                Fx.reactorsmoke.at(x + Mathf.range(size * tilesize / 2),
-                y + Mathf.range(size * tilesize / 2));
-            }
-        }
-        
-        this.heat = Mathf.clamp(this.heat);
-        
-        if(this.heat >= 0.999){
-            Events.fire(Trigger.thoriumReactorOverheat);
-            !Vars.headless ? reactorExplosion.at(this.x, this.y) : Call.effectReliable(reactorExplosion, this.x, this.y, 0, Pal.thoriumPink);
-            var x = this.x;
-            var y = this.y;
-            Timer.schedule(() => {
-                destroy(x, y);
-            }, 4);
-            this.kill();
-        }
-    }
-});
+module.exports = {
+    calculate: calculate,
+    effect: effect,
+    explode: explode
+};
