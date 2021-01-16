@@ -7,9 +7,9 @@ Implements the features of the nydus server as a js mod
 - the pyratite mixer contains free lead (again thanks to zesty)
 - separators contain free slag
 - cryofluid is extracted from titanium without water
+- separators that are clogged make titanium
 
 ### In Progress
-- separators that are clogged make titanium
 - airblast drills periodically gives 5 bonus items (amazing typo quez)
 - drowning in deep water while holding items creates land
 - placing a pulverizer on any ore gives it infinite scrap
